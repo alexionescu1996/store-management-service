@@ -23,7 +23,3 @@ management:
   endpoint:
     health:
       show-details: always
-
-
-server:
-  port: 9090
