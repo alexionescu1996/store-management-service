@@ -25,5 +25,10 @@ management:
       show-details: always
 
 
+api:
+  key:
+    name: testKey123
+    value: testValue123
+
 server:
   port: 9090
