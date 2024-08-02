@@ -17,7 +17,6 @@ public class HTTPInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String requestURI = request.getRequestURI();
         String requestAPIKey = request.getHeader(apiKeyName);
         if (apiKeyValue.equals(requestAPIKey)) {
             return true;

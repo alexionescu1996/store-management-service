@@ -1,16 +1,21 @@
 package com.example.demo.controller;
 
+import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+
 
     private final ProductService productService;
 
@@ -20,10 +25,18 @@ public class ProductController {
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Product> getAllProduct() {
-
         return productService.getAllProduct();
+    }
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<?> findProductById(@PathVariable Long id) {
+        Optional<Product> queryResult = productService.findById(id);
+        if (queryResult.isPresent()) {
+            return new ResponseEntity<>(queryResult.get(), HttpStatus.OK);
+        } else {
+            throw new ProductNotFoundException("Product not found with id: " + id);
+        }
     }
 
     @PostMapping("/save")

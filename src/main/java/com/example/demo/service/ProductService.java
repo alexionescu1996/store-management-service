@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -31,5 +32,8 @@ public class ProductService {
         return productRepository.saveAll(products);
     }
 
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
 
 }
