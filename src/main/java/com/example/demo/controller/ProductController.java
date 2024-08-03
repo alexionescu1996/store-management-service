@@ -31,7 +31,7 @@ public class ProductController {
 
     @GetMapping("/findById/{id}")
     public ResponseEntity<?> findProductById(@PathVariable Long id) {
-        Optional<Product> queryResult = productService.findById(id);
+        var queryResult = productService.findById(id);
         if (queryResult.isPresent()) {
             return new ResponseEntity<>(queryResult.get(), HttpStatus.OK);
         } else {
