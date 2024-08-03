@@ -1,6 +1,5 @@
 package com.example.demo.exception;
 
-import com.example.demo.aspect.LoggingAspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,5 +24,12 @@ public class GlobalExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(e.getMessage());
         logger.error("An error occurred: {}", e.getMessage(), e);
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidProductException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidProductException(InvalidProductException e) {
+        ErrorDetails errorDetails = new ErrorDetails(e.getMessage());
+        logger.error("An error occurred: {}", e.getMessage(), e);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 }

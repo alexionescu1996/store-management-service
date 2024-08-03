@@ -1,7 +1,6 @@
 package com.example.demo.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 
 import java.util.Date;
 
