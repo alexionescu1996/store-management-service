@@ -16,7 +16,6 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
 
-
     private final ProductService productService;
 
     @Autowired
@@ -40,12 +39,6 @@ public class ProductController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Product save(@RequestBody Product product) {
-        return productService.save(product);
-    }
-
-    @PostMapping("/saveAll")
     @PreAuthorize("hasRole('ADMIN')")
     public List<Product> saveAll(@RequestBody List<Product> products) {
         return productService.saveAll(products);
