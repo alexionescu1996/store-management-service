@@ -56,5 +56,12 @@ public class ProductController {
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        productService.delete(id);
+        return new ResponseEntity<>("Product has been successfully deleted.", HttpStatus.OK);
+    }
+
 
 }

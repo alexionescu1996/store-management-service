@@ -2,12 +2,14 @@ package com.example.demo.service;
 
 
 import com.example.demo.dao.ProductRepository;
+import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.model.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,14 @@ public class ProductService {
 
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+        product.setDeletedOn(LocalDateTime.now());
+        productRepository.save(product);
     }
 
 }
