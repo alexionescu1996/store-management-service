@@ -26,10 +26,6 @@ public class ProductService {
         return productRepository.findActiveProducts();
     }
 
-    public Product save(@RequestBody Product product) {
-        return productRepository.save(product);
-    }
-
     @Transactional
     public List<Product> saveAll(List<Product> products) {
         return productRepository.saveAll(products);
