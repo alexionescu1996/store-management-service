@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -24,8 +23,13 @@ public class ProductController {
     }
 
     @GetMapping("/getAll")
-    public List<Product> getAllProduct() {
-        return productService.getAllProduct();
+    public ResponseEntity<?> getAllProduct() {
+        List<Product> resultList = productService.getAllProduct();
+
+        if (resultList.isEmpty())
+            return new ResponseEntity<>("Product list is empty.", HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(resultList, HttpStatus.OK);
     }
 
     @GetMapping("/findById/{id}")
@@ -40,14 +44,16 @@ public class ProductController {
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Product> saveAll(@RequestBody List<Product> products) {
-        return productService.saveAll(products);
+    public ResponseEntity<List<Product>> saveAll(@RequestBody List<Product> products) {
+        List<Product> savedProducts = productService.saveAll(products);
+        return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
-    public Product update(@RequestBody Product product) {
-        return productService.save(product);
+    public ResponseEntity<Product> update(@RequestBody Product product) {
+        Product updatedProduct = productService.save(product);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
 
