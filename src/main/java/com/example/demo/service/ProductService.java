@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 
 import com.example.demo.dao.ProductRepository;
-import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.model.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +35,12 @@ public class ProductService {
         return productRepository.saveAll(products);
     }
 
-    public Optional<Product> findById(Long id) {
+    public Optional<Product> findActiveProductById(Long id) {
         return productRepository.findActiveProductById(id);
     }
 
     @Transactional
-    public void delete(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+    public void delete(Product product) {
         product.setDeletedOn(LocalDateTime.now());
         productRepository.save(product);
     }

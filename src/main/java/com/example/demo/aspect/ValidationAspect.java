@@ -30,14 +30,17 @@ public class ValidationAspect {
 
     private void validateProductDetails(Product product) {
         logger.info("Validating product: {}", product);
+
         if (product.getName() == null || product.getName().isEmpty()) {
             logger.error("Validation failed for product: {}", product);
             throw new InvalidProductException("Product name cannot be null or empty");
         }
+
         if (product.getPrice() == null || product.getPrice() < 0) {
             logger.error("Validation failed for product: {}", product);
             throw new InvalidProductException("Product price cannot be null or negative");
         }
+
         logger.info("Validation successful for product: {}", product);
     }
 }
