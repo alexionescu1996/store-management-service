@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class ProductController {
         if (queryResult.isPresent()) {
             return new ResponseEntity<>(queryResult.get(), HttpStatus.OK);
         } else {
-            throw new ProductNotFoundException("Product not found with id: " + id);
+            return new ResponseEntity<>("Product not found.", HttpStatus.NOT_FOUND);
         }
     }
 

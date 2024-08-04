@@ -24,7 +24,7 @@ public class ProductService {
     }
 
     public List<Product> getAllProduct() {
-        return productRepository.findAll();
+        return productRepository.findActiveProducts();
     }
 
     public Product save(@RequestBody Product product) {
@@ -37,7 +37,7 @@ public class ProductService {
     }
 
     public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+        return productRepository.findActiveProductById(id);
     }
 
     @Transactional
