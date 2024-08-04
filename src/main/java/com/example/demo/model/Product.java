@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,12 +17,15 @@ public class Product {
     private String name;
     private Double price;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_on", nullable = false, updatable = false)
     private LocalDateTime createdOn;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "updated_on", nullable = false)
     private LocalDateTime updatedOn;
 
+    @JsonIgnore
     @Column(name = "deleted_on")
     private LocalDateTime deletedOn;
 

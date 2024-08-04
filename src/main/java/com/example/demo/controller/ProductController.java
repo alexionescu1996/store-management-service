@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
+import com.example.demo.util.ValidateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public class ProductController {
     @GetMapping("/findById/{id}")
     public ResponseEntity<?> findProductById(@PathVariable Long id) {
         logger.info("Find product by id: {}", id);
+        ValidateUtil.validateId(id);
 
         var queryResult = productService.findActiveProductById(id);
 
@@ -62,7 +64,7 @@ public class ProductController {
 
         List<Product> savedProducts = productService.saveAll(products);
 
-        logger.info("Saved successfully {} products.", savedProducts.size());
+        logger.info("Saved successfully: {} products.", savedProducts.size());
 
         return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
     }
@@ -77,16 +79,19 @@ public class ProductController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
+        logger.info("Delete product with id: {}", id);
+        ValidateUtil.validateId(id);
+
         var queryResult = productService.findActiveProductById(id);
         if (queryResult.isPresent()) {
             Product product = queryResult.get();
             productService.delete(product);
 
-            logger.info("Product :{} has been successfully deleted.", product);
+            logger.info("Product: {} has been successfully deleted.", product);
             return new ResponseEntity<>("Product has been successfully deleted.", HttpStatus.OK);
         }
 
-        logger.warn("Product with id {} already deleted or not found", id);
+        logger.warn("Product with id: {} already deleted or not found", id);
         return new ResponseEntity<>("Product already deleted or not found.", HttpStatus.NOT_FOUND);
     }
 
