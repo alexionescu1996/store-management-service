@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/getAll")
+    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllProduct() {
         logger.info("Start get all products.");
 
@@ -40,7 +41,7 @@ public class ProductController {
         return new ResponseEntity<>(resultList, HttpStatus.OK);
     }
 
-    @GetMapping("/findById/{id}")
+    @GetMapping(value = "/findById/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findProductById(@PathVariable Long id) {
         logger.info("Find product by id: {}", id);
         ValidateUtil.validateId(id);
@@ -57,8 +58,8 @@ public class ProductController {
         return new ResponseEntity<>("Product not found.", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/save")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> save(@RequestBody List<Product> products) {
         logger.info("Save {} products.", products.size());
 
@@ -69,8 +70,8 @@ public class ProductController {
         return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updatePrice/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(value = "/updatePrice/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePrice(@PathVariable Long id, @RequestBody Double newPrice) {
         logger.info("Update price :{} for product with id: {}", newPrice, id);
 
@@ -88,8 +89,8 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(@PathVariable Long id) {
         logger.info("Delete product with id: {}", id);
         ValidateUtil.validateId(id);
