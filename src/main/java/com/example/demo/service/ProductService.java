@@ -39,10 +39,18 @@ public class ProductService {
         return productRepository.findActiveProductById(id);
     }
 
-    @Transactional
     public void delete(Product product) {
         product.setDeletedOn(LocalDateTime.now());
         productRepository.save(product);
     }
 
+    public Product updatePrice(Long id, double newPrice) {
+        Optional<Product> queryResult = productRepository.findActiveProductById(id);
+        if (queryResult.isPresent()) {
+            Product product = queryResult.get();
+            product.setPrice(newPrice);
+            return productRepository.save(product);
+        }
+        return null;
+    }
 }

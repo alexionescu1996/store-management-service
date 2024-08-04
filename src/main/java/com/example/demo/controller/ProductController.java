@@ -69,11 +69,23 @@ public class ProductController {
         return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/updatePrice/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> update(@RequestBody Product product) {
-        Product updatedProduct = productService.save(product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    public ResponseEntity<?> updatePrice(@PathVariable Long id, @RequestBody Double newPrice) {
+        logger.info("Update price :{} for product with id: {}", newPrice, id);
+
+        ValidateUtil.validateId(id);
+        ValidateUtil.validatePrice(newPrice);
+
+        Product updatedProduct = productService.updatePrice(id, newPrice);
+
+        if (updatedProduct != null) {
+            logger.info("Product updated with id: {} and new price: {}", updatedProduct.getId(), updatedProduct.getPrice());
+            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+        } else {
+            logger.warn("Product not found or deleted with id: {}", id);
+            return new ResponseEntity<>("Product not found or deleted.", HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/delete/{id}")

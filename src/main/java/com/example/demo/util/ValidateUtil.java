@@ -7,4 +7,10 @@ public class ValidateUtil {
             throw new IllegalArgumentException("Invalid ID: " + id);
         }
     }
+
+    public static void validatePrice(Double price) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("Invalid price: " + price + ". Price must be greater than zero.");
+        }
+    }
 }
