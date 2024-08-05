@@ -24,8 +24,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,7 +60,7 @@ public class ProductControllerTest {
         when(productService.getAllProduct()).thenReturn(Arrays.asList(product1, product2));
 
         MvcResult result = mockMvc.perform(get("/products/getAll"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -78,7 +78,7 @@ public class ProductControllerTest {
         when(productService.getAllProduct()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/products/getAll"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(content().string("Product list is empty."));
 
@@ -92,7 +92,7 @@ public class ProductControllerTest {
         when(productService.findActiveProductById(anyLong())).thenReturn(Optional.of(product));
 
         MvcResult result = mockMvc.perform(get("/products/findById/1"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -111,12 +111,22 @@ public class ProductControllerTest {
         when(productService.findActiveProductById(anyLong())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/products/findById/1"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Product not found."));
 
         verify(productService, times(1)).findActiveProductById(1L);
     }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    public void testFindProductByIdWhenInvalidId() throws Exception {
+
+        mockMvc.perform(get("/products/findById/a"))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
+    }
+
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -139,6 +149,78 @@ public class ProductControllerTest {
         assertEquals(1, returnedProducts[0].getPrice());
 
         verify(productService, times(1)).saveAll(any());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testUpdatePriceWhenSuccess() throws Exception {
+
+        Product updatedProduct = new Product(1L, "Product1", 15.12);
+
+        when(productService.updatePrice(anyLong(), anyDouble())).thenReturn(updatedProduct);
+
+        String newPriceJson = "15.12";
+
+        MvcResult result = mockMvc.perform(put("/products/updatePrice/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newPriceJson))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String json = result.getResponse().getContentAsString();
+        Product returnedProducts = objectMapper.readValue(json, Product.class);
+        System.out.println(returnedProducts);
+
+        verify(productService, times(1)).updatePrice(anyLong(), anyDouble());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testUpdatePriceWhenNotFound() throws Exception {
+        when(productService.updatePrice(anyLong(), anyDouble())).thenReturn(null);
+
+        String newPriceJson = "15.12";
+
+        mockMvc.perform(put("/products/updatePrice/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newPriceJson))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Product not found or deleted."));
+
+        verify(productService, times(1)).updatePrice(anyLong(), anyDouble());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testDeleteProductSuccess() throws Exception {
+        Product product = new Product(1L, "Test444", 15.25);
+
+        when(productService.findActiveProductById(anyLong())).thenReturn(Optional.of(product));
+        doNothing().when(productService).delete(product);
+
+        mockMvc.perform(delete("/products/delete/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Product has been successfully deleted."));
+
+        verify(productService, times(1)).findActiveProductById(anyLong());
+        verify(productService, times(1)).delete(product);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testDeleteProductNotFound() throws Exception {
+        when(productService.findActiveProductById(anyLong())).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/products/delete/1"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Product already deleted or not found."));
+
+        verify(productService, times(1)).findActiveProductById(anyLong());
+        verify(productService, times(0)).delete(any(Product.class));
     }
 
     String productsJson = "[\n" +
