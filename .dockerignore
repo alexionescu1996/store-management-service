@@ -1,0 +1,12 @@
+# Ignore .idea directory
+.idea
+
+# Ignore target directory to avoid including build artifacts
+target
+
+# Ignore other common directories and files
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+*.md
