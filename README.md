@@ -1,6 +1,15 @@
 # store-management-service
 
 
-`docker run --name mysql_container -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=store -e MYSQL_USER=alex -e MYSQL_PASSWORD=linux -v C:/Users/Alex/Desktop/mysql_data:/var/lib/mysql -p 3306:3306 -d mysql:latest`
+This is a Spring Boot application for managing a store's products. The application uses MySQL as its database and provides RESTful APIs for CRUD operations.
 
 
+### Steps to run the Application
+
+#### 1.  Clone the project from the repository
+#### 2.  Start MySQL Container
+Open a new terminal with admin/root privileges in the root folder of the project and run the command
+`docker-compose up`
+#### 3.  Build the project
+After MySQL container is up and running, execute `mvn clean install` to build the project
+#### 4.  Run the app
